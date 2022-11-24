@@ -7,13 +7,20 @@
     <groupId>org.ldh</groupId>
     <artifactId>security</artifactId>
     <version>1.0</version>
+    <modules>
+        <module>web</module>
+    </modules>
 
     <!--统一管理jar包-->
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>2.7.5</spring.boot.version>
+        <spring.boot.starter.web.version>2.7.5</spring.boot.starter.web.version>
+        <spring.boot.starter.security.version>2.7.5</spring.boot.starter.security.version>
+        <spring.boot.starter.data.redis.version>2.7.5</spring.boot.starter.data.redis.version>
+        <fastjson.version>2.0.19</fastjson.version>
+        <jwt.version>0.9.1</jwt.version>
         <lombok.version>1.18.24</lombok.version>
         <mysql.version>8.0.30</mysql.version>
         <druid.version>1.2.8</druid.version>
@@ -25,16 +32,35 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--spring-boot-starter-->
+            <!--spring-boot-starter-web-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter</artifactId>
-                <version>${spring.boot.version}</version>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.starter.web.version}</version>
             </dependency>
-            <!--spring-security-->
+            <!--spring-boot-starter-security-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring.boot.starter.security.version}</version>
+            </dependency>
+            <!--redis-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.boot.starter.data.redis.version}</version>
+            </dependency>
+            <!--fastjson-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <!--jwt-->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jwt.version}</version>
             </dependency>
             <!--lombok-->
             <dependency>

@@ -1,0 +1,23 @@
+server:
+  # 服务端口号
+  port: 9583
+
+spring:
+  # spring-security
+#  security:
+  # 使用配置文件方式配置用户信息
+#    user:
+#      name: test
+#      password: test
+  # datasource
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/security?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: 123456
+
+# mybatis
+mybatis:
+  # mapper文件所在的位置
+  mapper-locations: classpath:mapper/*.xml
