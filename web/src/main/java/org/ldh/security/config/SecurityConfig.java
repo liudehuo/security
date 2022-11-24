@@ -47,6 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 注销登录
+        http.logout().logoutUrl("/logout").logoutSuccessUrl("/login.html").permitAll();
         // 没有权限自定义页面
         http.exceptionHandling().accessDeniedPage("/403.html");
         // 自定义登录页面
@@ -56,10 +58,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // 登录访问路径
             .loginProcessingUrl("/login")
             // 登录成功后跳转的路径
-            .defaultSuccessUrl("/index").permitAll()
+            .defaultSuccessUrl("/user.html").permitAll()
             .and().authorizeRequests()
             // 可以直接访问不需要认证的路径
-            .antMatchers("/","/index").permitAll()
+            .antMatchers("/","/index","/index.html").permitAll()
             // 拥有指定权限才能访问
             .antMatchers("/add","remove","update").hasAuthority("CRUD")
             // 拥有指定角色才能访问
