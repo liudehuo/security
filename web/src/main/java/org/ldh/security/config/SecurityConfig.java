@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 /**
  * 使用配置类方式为Security创建用户信息
@@ -18,6 +22,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    // 注入数据源
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        // 自动创建表
+        // jdbcTokenRepository.setCreateTableOnStartup(true);
+        return jdbcTokenRepository;
+    }
 
     /**
      * 对密码加密时需要用到该对象
@@ -67,6 +84,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // 拥有指定角色才能访问
             .antMatchers("/bak").hasRole("manager")
             .anyRequest().authenticated()
+
+            // 配置自动登录
+            .and().rememberMe().tokenRepository(persistentTokenRepository())
+            // 设置有效时长
+            .tokenValiditySeconds(60)
+            .userDetailsService(userDetailsService)
+
             // 关闭csrf保护
             .and().csrf().disable();
     }
