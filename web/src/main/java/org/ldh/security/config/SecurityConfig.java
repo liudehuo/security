@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,17 +20,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     /**
-     * 配置用户信息
-     * 自定义实现类方式设置用户信息
-     * @param auth the {@link AuthenticationManagerBuilder} to use
-     * @throws Exception
-     */
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    /**
      * 对密码加密时需要用到该对象
      * There is no PasswordEncoder mapped for the id "null"
      * @return
@@ -37,6 +27,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * 认证
+     * @param auth the {@link AuthenticationManagerBuilder} to use
+     * @throws Exception
+     */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // 自定义实现类方式设置用户信息
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    /**
+     * 授权
+     * @param http the {@link HttpSecurity} to modify
+     * @throws Exception
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        // 没有权限自定义页面
+        http.exceptionHandling().accessDeniedPage("/403.html");
+        // 自定义登录页面
+        http.formLogin()
+            // 设置登录页面
+            .loginPage("/login.html")
+            // 登录访问路径
+            .loginProcessingUrl("/login")
+            // 登录成功后跳转的路径
+            .defaultSuccessUrl("/index").permitAll()
+            .and().authorizeRequests()
+            // 可以直接访问不需要认证的路径
+            .antMatchers("/","/index").permitAll()
+            // 拥有指定权限才能访问
+            .antMatchers("/add","remove","update").hasAuthority("CRUD")
+            // 拥有指定角色才能访问
+            .antMatchers("/bak").hasRole("manager")
+            .anyRequest().authenticated()
+            // 关闭csrf保护
+            .and().csrf().disable();
     }
 }
 
