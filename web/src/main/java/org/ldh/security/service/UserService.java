@@ -1,9 +1,9 @@
 package org.ldh.security.service;
 
-import org.ldh.security.entity.User;
+import org.ldh.security.entity.SysUser;
 
 public interface UserService {
 
-    User queryUser(String username);
+    SysUser queryUser(String username);
 
 }

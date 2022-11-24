@@ -1,10 +1,8 @@
 package org.ldh.security.entity;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
-
 import java.util.Objects;
 
-public class User {
+public class SysUser {
 
     private Long id;
 
@@ -14,10 +12,10 @@ public class User {
 
     private String role;
 
-    public User() {
+    public SysUser() {
     }
 
-    public User(Long id, String username, String password, String role) {
+    public SysUser(Long id, String username, String password, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -60,7 +58,7 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        SysUser user = (SysUser) o;
         return id.equals(user.id) && username.equals(user.username) && password.equals(user.password) && role.equals(user.role);
     }
 
