@@ -1,6 +1,8 @@
 server:
   # 服务端口号
-  port: 9583
+  port: 9006
+#  servlet:
+#    context-path: /dev-api
 
 spring:
   # security:
@@ -21,3 +23,5 @@ spring:
 mybatis:
   # mapper文件所在的位置
   mapper-locations: classpath:mybatis/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

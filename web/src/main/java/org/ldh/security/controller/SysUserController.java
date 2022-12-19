@@ -1,17 +1,72 @@
 package org.ldh.security.controller;
 
+import com.auth0.jwt.exceptions.AlgorithmMismatchException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.ldh.security.entity.SysUser;
+import org.ldh.security.service.SysUserService;
+import org.ldh.security.utils.JWTUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 
 @RestController
 public class SysUserController {
 
     private static Logger log = LoggerFactory.getLogger(SysUserController.class);
+
+    @Autowired
+    private SysUserService sysUserService;
+
+    @RequestMapping("/getTokenInfo")
+    public String getTokenInfo(String username) {
+        SysUser sysUser = sysUserService.queryUser(username);
+        Map<String,String> map = new HashMap<>();
+        map.put("username",sysUser.getUsername());
+        map.put("userId",sysUser.getId().toString());
+        String token = JWTUtil.getToken(map);
+        return token;
+    }
+
+    @RequestMapping(value = "/verifyToken",method = RequestMethod.POST)
+    public Map<String,Object> verifyToken(String token) {
+        Map<String,Object> map = new HashMap<>();
+        try {
+            DecodedJWT verify = JWTUtil.verify(token);
+            map.put("status",200);
+            map.put("message","请求成功");
+            return map;
+        } catch (SignatureVerificationException e) {
+            e.printStackTrace();
+            map.put("message","无效签名");
+        } catch (TokenExpiredException e) {
+            e.printStackTrace();
+            map.put("message","token已过期");
+        } catch (AlgorithmMismatchException e) {
+            e.printStackTrace();
+            map.put("message","算法不正确");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        map.put("message",500);
+        return map;
+    }
+
+    @RequestMapping(value = "/admin-vue", method = RequestMethod.GET)
+    public String adminVue() {
+        System.out.println("@@@@@@@@");
+        return "admin for vue";
+    }
 
     @RequestMapping("/hello")
     public String hello() {
